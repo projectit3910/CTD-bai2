@@ -242,6 +242,9 @@ void compileParam(void) {
 
 void compileStatements(void) {
   // TODO
+  compileStatement();
+  while (lookAhead->tokenType == SB_SEMICOLON)
+    compileStatement();
 }
 
 void compileStatements2(void) {
