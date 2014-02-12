@@ -218,9 +218,11 @@ void compileBasicType(void) {
 void compileParams(void) {
   // TODO
   eat(SB_LPAR);
-  while (lookAhead->tokenType == KW_VAR
-	 || lookAhead->tokenType == TK_IDENT)
+  compileParam();
+  while (lookAhead->tokenType == SB_SEMICOLON) {
+    eat(SB_SEMICOLON);
     compileParam();
+  }
   eat(SB_RPAR);
 }
 
@@ -237,14 +239,15 @@ void compileParam(void) {
   eat(TK_IDENT);
   eat(SB_COLON);
   compileBasicType();
-  eat(SB_SEMICOLON);
 }
 
 void compileStatements(void) {
   // TODO
   compileStatement();
-  while (lookAhead->tokenType == SB_SEMICOLON)
+  while (lookAhead->tokenType == SB_SEMICOLON) {
+    eat(SB_SEMICOLON);
     compileStatement();
+  }
 }
 
 void compileStatements2(void) {
