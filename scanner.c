@@ -192,6 +192,7 @@ Token* getToken(void) {
 				skipComment();
 				return getToken();
 			default:
+				break;
 		}
 	}
 	return makeToken(SB_LPAR, ln, cn);
