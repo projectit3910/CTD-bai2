@@ -217,10 +217,12 @@ void compileParams(void) {
   while (lookAhead->tokenType == KW_VAR
 	 || lookAhead->tokenType == TK_IDENT)
     compileParam();
+  eat(SB_RPAR);
 }
 
 void compileParams2(void) {
   // TODO
+  
 }
 
 void compileParam(void) {
