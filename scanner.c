@@ -147,7 +147,7 @@ Token* getToken(void) {
 		token->tokenType = SB_NEQ;
 		readChar();
 	} else {
-		error(ERR_INVALIDSYMBOL, ln, cn);
+		error(ERR_INVALIDSYMBOL, lineNo, colNo);
 	}
 	return token;
   case CHAR_GT:
