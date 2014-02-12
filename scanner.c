@@ -197,7 +197,7 @@ Token* getToken(void) {
 	}
 	return makeToken(SB_LPAR, ln, cn);
   case CHAR_PERIOD:
-	token = makeToken(SB_PERIOD, ln, cn);
+	token = makeToken(SB_PERIOD, lineNo, colNo);
 	readChar();
 	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_RPAR)) {
 		token->tokenType = SB_RSEL;
