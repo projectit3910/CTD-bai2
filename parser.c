@@ -144,7 +144,7 @@ void compileFuncDecl(void) {
   compileBasicType();
   eat(SB_COLON);
   compileBlock();
-  eat(SB_COLON);
+  eat(SB_SEMICOLON);
   assert("Function parsed ....");
 }
 
@@ -156,7 +156,7 @@ void compileProcDecl(void) {
     compileParams();
   eat(SB_COLON);
   compileBlock();
-  eat(SB_COLON);
+  eat(SB_SEMICOLON);
   assert("Procedure parsed ....");
 }
 
