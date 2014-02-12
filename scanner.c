@@ -31,7 +31,7 @@ void skipComment() {
 		readChar();
 		if (charCodes[currentChar] == CHAR_RPAR) {
 			readChar();
-			f = 1;
+			flag = 1;
 			break;
 		}
 	} else {
@@ -61,8 +61,8 @@ Token* readIdentKeyword(void) {
 	return token;
   }
   
-  token->tokenType = checkKeyword(string);
-  if (tokenType==TK_NONE)
+  token->tokenType = checkKeyword(token->string);
+  if (token->tokenType==TK_NONE)
     token->tokenType = TK_IDENT;
   
   return token;
@@ -191,6 +191,7 @@ Token* getToken(void) {
 				readChar();
 				skipComment();
 				return getToken();
+			default:
 		}
 	}
 	return makeToken(SB_LPAR, ln, cn);
