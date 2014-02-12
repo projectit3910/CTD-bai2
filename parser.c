@@ -126,7 +126,11 @@ void compileVarDecl(void) {
 void compileSubDecls(void) {
   assert("Parsing subtoutines ....");
   // TODO
-  
+  if (lookAhead->tokenType == KW_PROCEDURE) {
+    compileProcDecl();
+  } else if (lookAhead->tokenType == KW_FUNCTION) {
+    compileFuncDecl();
+  }
   assert("Subtoutines parsed ....");
 }
 
