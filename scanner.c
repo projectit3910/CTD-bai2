@@ -88,7 +88,7 @@ Token* readNumber(void) {
   if (token->tokenType == TK_NUMBER)
 	sprintf(token->string,"%d", token->value);
   else
-	sprintf(token->string,"%h", token->fvalue);
+	sprintf(token->string,"%g", token->fvalue);
   return token;
 }
 
@@ -128,15 +128,20 @@ Token* readConstString(void) {
 	} else if (charCodes[currentChar] == CHAR_BACKSLASH && !backslash) {
 		backslash = 1;
 	} else {
-		if (str_len >= MAX_IDENT_LEN) break;
-		token->string[str_len++] = currentChar
+		if (str_len >= MAX_IDENT_LEN) {
+			error(ERR_CONSTSTRINGTOOLONG, lineNo, colNo);
+			break;
+		}
+		token->string[str_len++] = currentChar;
 		token->string[str_len]='\0';
 		backslash = 0;
 	}
   }
   
   if (!flag) 
-    error(ERR_ENDOFCOMMENT, lineNo, colNo);
+    error(ERR_ENDOFSTRING, lineNo, colNo);
+  
+  return token;
 }
 
 Token* getToken(void) {

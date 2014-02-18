@@ -22,6 +22,12 @@ void error(ErrorCode err, int lineNo, int colNo) {
   case ERR_INVALIDSYMBOL:
     printf("%d-%d:%s\n", lineNo, colNo, ERM_INVALIDSYMBOL);
     break;
+  case ERR_ENDOFSTRING:
+	printf("%d-%d:%s\n", lineNo, colNo, ERM_ENDOFSTRING);
+	break;
+  case ERR_CONSTSTRINGTOOLONG:
+	printf("%d-%d:%s\n", lineNo, colNo, ERM_CONSTSTRINGTOOLONG);
+	break;
   }
   exit(-1);
 }
