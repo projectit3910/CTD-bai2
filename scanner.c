@@ -71,11 +71,24 @@ Token* readIdentKeyword(void) {
 Token* readNumber(void) {
   Token *token = makeToken(TK_NUMBER, lineNo, colNo);
   token->value = 0;
-  while ((currentChar != EOF) && charCodes[currentChar]==CHAR_DIGIT) {
-    token->value = token->value*10 + (currentChar-'0');
-    readChar();
+  double f = 0.1;
+  while (currentChar != EOF) {
+	if (charCodes[currentChar]==CHAR_DIGIT) {
+		if (token->tokenType == TK_FLOAT) {
+			token->fvalue += (currentChar-'0')*f;
+			f /= 10;
+		} else token->value = token->value*10 + (currentChar-'0');
+		readChar();
+	} else if (charCodes[currentChar]==CHAR_PERIOD && token->tokenType == TK_NUMBER) {
+		token->fvalue = token->value;
+		token->tokenType = TK_FLOAT;
+		readChar();
+	} else break;
   }
-  sprintf(token->string,"%d",token->value);
+  if (token->tokenType == TK_NUMBER)
+	sprintf(token->string,"%d", token->value);
+  else
+	sprintf(token->string,"%h", token->fvalue);
   return token;
 }
 
@@ -99,6 +112,31 @@ Token* readConstChar(void) {
     error(ERR_INVALIDCHARCONSTANT, token->lineNo, token->colNo);
     return token;
   }
+}
+
+Token* readConstString(void) {
+	Token *token = makeToken(TK_STRING, lineNo, colNo);
+	
+	int flag = 0,str_len = 0,backslash = 0;
+	token->string[str_len]='\0';
+  while (currentChar != EOF) {
+	readChar();
+	if (charCodes[currentChar] == CHAR_DOUBLEQUOTE && !backslash) {
+		flag = 1;
+		readChar();
+		break;
+	} else if (charCodes[currentChar] == CHAR_BACKSLASH && !backslash) {
+		backslash = 1;
+	} else {
+		if (str_len >= MAX_IDENT_LEN) break;
+		token->string[str_len++] = currentChar
+		token->string[str_len]='\0';
+		backslash = 0;
+	}
+  }
+  
+  if (!flag) 
+    error(ERR_ENDOFCOMMENT, lineNo, colNo);
 }
 
 Token* getToken(void) {
@@ -205,6 +243,7 @@ Token* getToken(void) {
 	}
 	return token;
   case CHAR_SINGLEQUOTE: return readConstChar();
+  case CHAR_DOUBLEQUOTE: return readConstString();
   default:
     token = makeToken(TK_NONE, lineNo, colNo);
     error(ERR_INVALIDSYMBOL, lineNo, colNo);
@@ -224,7 +263,9 @@ void printToken(Token *token) {
   case TK_NONE: printf("TK_NONE\n"); break;
   case TK_IDENT: printf("TK_IDENT(%s)\n", token->string); break;
   case TK_NUMBER: printf("TK_NUMBER(%s)\n", token->string); break;
+  case TK_FLOAT: printf("TK_FLOAT(%s)\n", token->string); break;
   case TK_CHAR: printf("TK_CHAR(\'%s\')\n", token->string); break;
+  case TK_STRING: printf("TK_STRING(\'%s\')\n", token->string); break;
   case TK_EOF: printf("TK_EOF\n"); break;
 
   case KW_PROGRAM: printf("KW_PROGRAM\n"); break;
