@@ -92,6 +92,20 @@ Token* readNumber(void) {
   return token;
 }
 
+Token* readRealNumber(void) {
+  Token *token = makeToken(TK_FLOAT, lineNo, colNo);
+  token->fvalue = token->value = 0;
+  double f = 0.1;
+  readChar();
+  while (currentChar != EOF&&charCodes[currentChar]==CHAR_DIGIT) {
+	token->fvalue += (currentChar-'0')*f;
+	f /= 10;
+	readChar();
+  }
+  sprintf(token->string,"%g", token->fvalue);
+  return token;
+}
+
 Token* readConstChar(void) {
   Token *token = makeToken(TK_CHAR, lineNo, colNo);
   
@@ -240,13 +254,22 @@ Token* getToken(void) {
 	}
 	return makeToken(SB_LPAR, ln, cn);
   case CHAR_PERIOD:
-	token = makeToken(SB_PERIOD, lineNo, colNo);
+	ln = lineNo;
+	cn = colNo;
 	readChar();
-	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_RPAR)) {
-		token->tokenType = SB_RSEL;
-		readChar();
+	if ((currentChar != EOF)) {
+		switch (charCodes[currentChar]) {
+			case CHAR_RPAR:
+				readChar();
+				return makeToken(SB_RSEL, ln, cn);
+			case CHAR_DIGIT:
+				readChar();
+				return readRealNumber();
+			default:
+				break;
+		}
 	}
-	return token;
+	return makeToken(SB_PERIOD, ln, cn);
   case CHAR_SINGLEQUOTE: return readConstChar();
   case CHAR_DOUBLEQUOTE: return readConstString();
   default:
