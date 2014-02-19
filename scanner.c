@@ -73,22 +73,22 @@ Token* readNumber(void) {
   token->value = 0;
   double f = 0.1;
   while (currentChar != EOF) {
-	if (charCodes[currentChar]==CHAR_DIGIT) {
-		if (token->tokenType == TK_FLOAT) {
-			token->fvalue += (currentChar-'0')*f;
-			f /= 10;
-		} else token->value = token->value*10 + (currentChar-'0');
-		readChar();
-	} else if (charCodes[currentChar]==CHAR_PERIOD && token->tokenType == TK_NUMBER) {
-		token->fvalue = token->value;
-		token->tokenType = TK_FLOAT;
-		readChar();
-	} else break;
+    if (charCodes[currentChar]==CHAR_DIGIT) {
+      if (token->tokenType == TK_FLOAT) {
+	token->fvalue += (currentChar-'0')*f;
+	f /= 10;
+      } else token->value = token->value*10 + (currentChar-'0');
+      readChar();
+    } else if (charCodes[currentChar]==CHAR_PERIOD && token->tokenType == TK_NUMBER) {
+      token->fvalue = token->value;
+      token->tokenType = TK_FLOAT;
+      readChar();
+    } else break;
   }
   if (token->tokenType == TK_NUMBER)
-	sprintf(token->string,"%d", token->value);
+    sprintf(token->string,"%d", token->value);
   else
-	sprintf(token->string,"%g", token->fvalue);
+    sprintf(token->string,"%g", token->fvalue);
   return token;
 }
 
@@ -98,9 +98,9 @@ Token* readRealNumber(void) {
   double f = 0.1;
   readChar();
   while (currentChar != EOF&&charCodes[currentChar]==CHAR_DIGIT) {
-	token->fvalue += (currentChar-'0')*f;
-	f /= 10;
-	readChar();
+    token->fvalue += (currentChar-'0')*f;
+    f /= 10;
+    readChar();
   }
   sprintf(token->string,"%g", token->fvalue);
   return token;
@@ -111,7 +111,7 @@ Token* readConstChar(void) {
   
   readChar();
   if (currentChar == EOF) {
-	token->tokenType = TK_NONE;
+    token->tokenType = TK_NONE;
     error(ERR_INVALIDCHARCONSTANT, token->lineNo, token->colNo);
     return token;
   }
@@ -119,41 +119,41 @@ Token* readConstChar(void) {
   token->string[1] = '\0';
   readChar();
   if ((currentChar != EOF) && charCodes[currentChar] == CHAR_SINGLEQUOTE) {
-	readChar();
+    readChar();
     return token;
   } else {
-	token->tokenType = TK_NONE;
+    token->tokenType = TK_NONE;
     error(ERR_INVALIDCHARCONSTANT, token->lineNo, token->colNo);
     return token;
   }
 }
 
 Token* readConstString(void) {
-	Token *token = makeToken(TK_STRING, lineNo, colNo);
-	
-	int flag = 0,str_len = 0,backslash = 0;
-	token->string[str_len]='\0';
+  Token *token = makeToken(TK_STRING, lineNo, colNo);
+  
+  int str_len = 0,backslash = 0;
+  token->string[str_len]='\0';
   while (currentChar != EOF) {
-	readChar();
-	if (charCodes[currentChar] == CHAR_DOUBLEQUOTE && !backslash) {
-		flag = 1;
-		readChar();
-		break;
-	} else if (charCodes[currentChar] == CHAR_BACKSLASH && !backslash) {
-		backslash = 1;
-	} else {
-		if (str_len >= MAX_IDENT_LEN) {
-			error(ERR_CONSTSTRINGTOOLONG, lineNo, colNo);
-			break;
-		}
-		token->string[str_len++] = currentChar;
-		token->string[str_len]='\0';
-		backslash = 0;
-	}
+    readChar();
+    if (charCodes[currentChar] == CHAR_DOUBLEQUOTE && !backslash) {
+      readChar();
+      return token;
+    } else if (charCodes[currentChar] == CHAR_BACKSLASH && !backslash) {
+      backslash = 1;
+    } else {
+      if (str_len >= MAX_IDENT_LEN) {
+	token->tokenType = TK_NONE;
+	error(ERR_CONSTSTRINGTOOLONG, lineNo, colNo);
+	break;
+      }
+      token->string[str_len++] = currentChar;
+      token->string[str_len]='\0';
+      backslash = 0;
+    }
   }
   
-  if (!flag) 
-    error(ERR_ENDOFSTRING, lineNo, colNo);
+  token->tokenType = TK_NONE;
+  error(ERR_ENDOFSTRING, lineNo, colNo);
   
   return token;
 }
@@ -372,6 +372,5 @@ int main(int argc, char *argv[]) {
     
   return 0;
 }
-
 
 
