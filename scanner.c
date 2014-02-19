@@ -27,16 +27,16 @@ void skipBlank() {
 void skipComment() {
   int flag = 0;
   while (currentChar != EOF) {
-	if (charCodes[currentChar] == CHAR_TIMES) {
-		readChar();
-		if (charCodes[currentChar] == CHAR_RPAR) {
-			readChar();
-			flag = 1;
-			break;
-		}
-	} else {
-		readChar();
-	}
+    if (charCodes[currentChar] == CHAR_TIMES) {
+      readChar();
+      if (charCodes[currentChar] == CHAR_RPAR) {
+	readChar();
+	flag = 1;
+	break;
+      }
+    } else {
+      readChar();
+    }
   }
   
   if (!flag) 
@@ -48,17 +48,17 @@ Token* readIdentKeyword(void) {
   int str_len = 0;
   
   while ((currentChar != EOF) && (charCodes[currentChar]==CHAR_LETTER || 
-		charCodes[currentChar]==CHAR_DIGIT)) {
-	if (str_len <= MAX_IDENT_LEN) {
-		token->string[str_len++]=currentChar;
-		token->string[str_len]='\0';
-	}
+				  charCodes[currentChar]==CHAR_DIGIT)) {
+    if (str_len <= MAX_IDENT_LEN) {
+      token->string[str_len++]=currentChar;
+      token->string[str_len]='\0';
+    }
     readChar();
   }
   
   if (str_len > MAX_IDENT_LEN) {
-	error(ERR_IDENTTOOLONG, token->lineNo, token->colNo);
-	return token;
+    error(ERR_IDENTTOOLONG, token->lineNo, token->colNo);
+    return token;
   }
   
   token->tokenType = checkKeyword(token->string);
@@ -96,7 +96,6 @@ Token* readRealNumber(void) {
   Token *token = makeToken(TK_FLOAT, lineNo, colNo);
   token->fvalue = token->value = 0;
   double f = 0.1;
-  readChar();
   while (currentChar != EOF&&charCodes[currentChar]==CHAR_DIGIT) {
     token->fvalue += (currentChar-'0')*f;
     f /= 10;
@@ -133,23 +132,34 @@ Token* readConstString(void) {
   
   int str_len = 0,backslash = 0;
   token->string[str_len]='\0';
+  readChar();
   while (currentChar != EOF) {
-    readChar();
     if (charCodes[currentChar] == CHAR_DOUBLEQUOTE && !backslash) {
       readChar();
       return token;
     } else if (charCodes[currentChar] == CHAR_BACKSLASH && !backslash) {
-      backslash = 1;
+      backslash = 1;      
     } else {
       if (str_len >= MAX_IDENT_LEN) {
 	token->tokenType = TK_NONE;
 	error(ERR_CONSTSTRINGTOOLONG, lineNo, colNo);
 	break;
       }
-      token->string[str_len++] = currentChar;
+      if (currentChar == 't' && backslash)
+	token->string[str_len++] = '\t';
+      else if (currentChar == 'n' && backslash)
+	token->string[str_len++] = '\n';
+      else if (currentChar == '\n' && backslash) {
+	backslash = 0;
+	skipBlank();
+	continue;	
+      } else {
+	token->string[str_len++] = currentChar;
+      }
       token->string[str_len]='\0';
       backslash = 0;
     }
+    readChar();
   }
   
   token->tokenType = TK_NONE;
@@ -192,37 +202,37 @@ Token* getToken(void) {
   case CHAR_COLON:
     token = makeToken(SB_COLON, lineNo, colNo);
     readChar();
-	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
-		token->tokenType = SB_ASSIGN;
-		readChar();
-	}
-	return token;
+    if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
+      token->tokenType = SB_ASSIGN;
+      readChar();
+    }
+    return token;
   case CHAR_EXCLAIMATION:
     token = makeToken(TK_NONE, lineNo, colNo);
-	readChar();
-	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
-		token->tokenType = SB_NEQ;
-		readChar();
-	} else {
-		error(ERR_INVALIDSYMBOL, lineNo, colNo);
-	}
-	return token;
+    readChar();
+    if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
+      token->tokenType = SB_NEQ;
+      readChar();
+    } else {
+      error(ERR_INVALIDSYMBOL, lineNo, colNo);
+    }
+    return token;
   case CHAR_GT:
-	token = makeToken(SB_GT, lineNo, colNo);
-	readChar();
-	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
-		token->tokenType = SB_GE;
-		readChar();
-	}
-	return token;
+    token = makeToken(SB_GT, lineNo, colNo);
+    readChar();
+    if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
+      token->tokenType = SB_GE;
+      readChar();
+    }
+    return token;
   case CHAR_LT:
-	token = makeToken(SB_LT, lineNo, colNo);
-	readChar();
-	if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
-		token->tokenType = SB_LE;
-		readChar();
-	}
-	return token;
+    token = makeToken(SB_LT, lineNo, colNo);
+    readChar();
+    if ((currentChar != EOF) && (charCodes[currentChar] == CHAR_EQ)) {
+      token->tokenType = SB_LE;
+      readChar();
+    }
+    return token;
   case CHAR_SEMICOLON:
     token = makeToken(SB_SEMICOLON, lineNo, colNo);
     readChar();
@@ -232,44 +242,43 @@ Token* getToken(void) {
     readChar(); 
     return token;
   case CHAR_RPAR:
-	token = makeToken(SB_RPAR, lineNo, colNo);
+    token = makeToken(SB_RPAR, lineNo, colNo);
     readChar(); 
     return token;
   case CHAR_LPAR:
-	ln = lineNo;
-	cn = colNo;
+    ln = lineNo;
+    cn = colNo;
+    readChar();
+    if ((currentChar != EOF)) {
+      switch (charCodes[currentChar]) {
+      case CHAR_PERIOD:
 	readChar();
-	if ((currentChar != EOF)) {
-		switch (charCodes[currentChar]) {
-			case CHAR_PERIOD:
-				readChar();
-				return makeToken(SB_LSEL, ln, cn);
-			case CHAR_TIMES:
-				readChar();
-				skipComment();
-				return getToken();
-			default:
-				break;
-		}
-	}
-	return makeToken(SB_LPAR, ln, cn);
+	return makeToken(SB_LSEL, ln, cn);
+      case CHAR_TIMES:
+	readChar();
+	skipComment();
+	return getToken();
+      default:
+	break;
+      }
+    }
+    return makeToken(SB_LPAR, ln, cn);
   case CHAR_PERIOD:
-	ln = lineNo;
-	cn = colNo;
+    ln = lineNo;
+    cn = colNo;
+    readChar();
+    if ((currentChar != EOF)) {
+      switch (charCodes[currentChar]) {
+      case CHAR_RPAR:
 	readChar();
-	if ((currentChar != EOF)) {
-		switch (charCodes[currentChar]) {
-			case CHAR_RPAR:
-				readChar();
-				return makeToken(SB_RSEL, ln, cn);
-			case CHAR_DIGIT:
-				readChar();
-				return readRealNumber();
-			default:
-				break;
-		}
-	}
-	return makeToken(SB_PERIOD, ln, cn);
+	return makeToken(SB_RSEL, ln, cn);
+      case CHAR_DIGIT:
+	return readRealNumber();
+      default:
+	break;
+      }
+    }
+    return makeToken(SB_PERIOD, ln, cn);
   case CHAR_SINGLEQUOTE: return readConstChar();
   case CHAR_DOUBLEQUOTE: return readConstString();
   default:
