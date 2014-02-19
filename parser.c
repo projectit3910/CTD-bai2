@@ -396,6 +396,11 @@ void compileCondition2(void) {
   // TODO
 }
 
+void compileExpressions(void) {
+	while (lookAhead->tokenType == SB_COMMA)
+		compileExpression();
+}
+
 void compileExpression(void) {
   assert("Parsing an expression");
   // TODO
@@ -446,7 +451,6 @@ void compileTerm2(void) {
 void compileFactor(void) {
   // TODO
   compileUnsignedConstant2();
-  compileVariable2();
   if (lookAhead->tokenType == TK_IDENT) {
   	eat(TK_IDENT);
   	if (lookAhead->tokenType == SB_LPAR) {
@@ -454,6 +458,10 @@ void compileFactor(void) {
   		compileExpression();
 		compileExpressions();
 		eat(SB_RPAR);
+  	} else while (lookAhead->tokenType == SB_LSEL) {
+  		eat(SB_LSEL);
+  		compileExpression();
+  		eat(SB_RSEL);
   	}
   } else if (lookAhead->tokenType == SB_LPAR) {
   	eat(SB_LPAR);
