@@ -63,7 +63,13 @@ void error(ErrorCode err, int lineNo, int colNo) {
     break;
   case ERR_INVALIDSUBDECL:
     printf("%d-%d:%s\n", lineNo, colNo, ERM_INVALIDSUBDECL);
-    break;
+    break;  
+  case ERR_ENDOFSTRING:
+	printf("%d-%d:%s\n", lineNo, colNo, ERM_ENDOFSTRING);
+	break;
+  case ERR_CONSTSTRINGTOOLONG:
+	printf("%d-%d:%s\n", lineNo, colNo, ERM_CONSTSTRINGTOOLONG);
+	break;
   }
   exit(0);
 }
