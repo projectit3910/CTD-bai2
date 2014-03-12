@@ -520,9 +520,11 @@ void compileTerm2(void) {
   case SB_TIMES:
     eat(SB_TIMES);
     compileTerm();
+    break;
   case SB_SLASH:
     eat(SB_SLASH);
     compileTerm();
+    break;
   default:
     break;
   }  
