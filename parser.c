@@ -410,6 +410,7 @@ void compileDoSt(void) {
   compileStatement();
   eat(KW_WHILE);
   compileCondition();
+  eat(SB_SEMICOLON);
   assert("Do while statement pased ....");
 }
 
