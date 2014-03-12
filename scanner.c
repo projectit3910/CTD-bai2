@@ -76,15 +76,25 @@ Token* readIdentKeyword(void) {
 
 Token* readNumber(void) {
   Token *token = makeToken(TK_NUMBER, lineNo, colNo);
-  int count = 0;
-
-  while ((currentChar != EOF) && (charCodes[currentChar] == CHAR_DIGIT)) {
-    token->string[count++] = (char)currentChar;
-    readChar();
+  token->value = 0;
+  double f = 0.1;
+  while (currentChar != EOF) {
+    if (charCodes[currentChar]==CHAR_DIGIT) {
+      if (token->tokenType == TK_FLOAT) {
+	token->fvalue += (currentChar-'0')*f;
+	f /= 10;
+      } else token->value = token->value*10 + (currentChar-'0');
+      readChar();
+    } else if (charCodes[currentChar]==CHAR_PERIOD && token->tokenType == TK_NUMBER) {
+      token->fvalue = token->value;
+      token->tokenType = TK_FLOAT;
+      readChar();
+    } else break;
   }
-
-  token->string[count] = '\0';
-  token->value = atoi(token->string);
+  if (token->tokenType == TK_NUMBER)
+    sprintf(token->string,"%d", token->value);
+  else
+    sprintf(token->string,"%g", token->fvalue);
   return token;
 }
 
@@ -285,6 +295,10 @@ Token* getToken(void) {
     return makeToken(SB_PERIOD, ln, cn);
   case CHAR_SINGLEQUOTE: return readConstChar();
   case CHAR_DOUBLEQUOTE: return readConstString();
+  case CHAR_PERCENT: 
+  	token = makeToken(SB_TIMES, lineNo, colNo);
+    readChar(); 
+    return token;
   default:
     token = makeToken(TK_NONE, lineNo, colNo);
     error(ERR_INVALIDSYMBOL, lineNo, colNo);

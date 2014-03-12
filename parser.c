@@ -567,8 +567,14 @@ void compileFactor(void) {
   case TK_NUMBER:
     eat(TK_NUMBER);
     break;
+  case TK_FLOAT:
+    eat(TK_FLOAT);
+    break;
   case TK_CHAR:
     eat(TK_CHAR);
+    break;
+  case TK_STRING:
+    eat(TK_STRING);
     break;
   case TK_IDENT:
     eat(TK_IDENT);
