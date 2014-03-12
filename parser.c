@@ -328,6 +328,9 @@ void compileStatement(void) {
   case KW_WHILE:
     compileWhileSt();
     break;
+  case KW_DO:
+    compileDoSt();
+    break;
   case KW_FOR:
     compileForSt();
     break;
@@ -399,6 +402,15 @@ void compileWhileSt(void) {
   eat(KW_DO);
   compileStatement();
   assert("While statement pased ....");
+}
+
+void compileDoSt(void) {
+  assert("Parsing a do while statement ....");
+  eat(KW_DO);
+  compileStatement();
+  eat(KW_WHILE);
+  compileCondition();
+  assert("Do while statement pased ....");
 }
 
 void compileForSt(void) {
@@ -520,9 +532,15 @@ void compileTerm2(void) {
   case SB_TIMES:
     eat(SB_TIMES);
     compileTerm();
+    break;
   case SB_SLASH:
     eat(SB_SLASH);
     compileTerm();
+    break;
+  case SB_DIV:
+    eat(SB_DIV);
+    compileTerm();
+    break;
   default:
     break;
   }  
