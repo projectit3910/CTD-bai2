@@ -130,7 +130,7 @@ void compileVarDecl(void) {
 }
 
 void compileSubDecls(void) {
-  assert("Parsing subtoutines ....");
+  assert("Parsing subroutines ....");
   // TODO
   switch (lookAhead->tokenType) {
   case KW_FUNCTION:
@@ -144,7 +144,7 @@ void compileSubDecls(void) {
   default:
     break;
   }
-  assert("Subtoutines parsed ....");
+  assert("Subroutines parsed ....");
 }
 
 void compileFuncDecl(void) {
@@ -386,7 +386,9 @@ void compileGroupSt(void) {
   // TODO
   eat(KW_BEGIN);
   compileStatements();
-  eat(KW_END);
+  if (lookAhead->tokenType == KW_END)
+    eat(KW_END);
+  else eat(SB_SEMICOLON);
   assert("Group statement parsed ....");
 }
 
@@ -413,7 +415,7 @@ void compileWhileSt(void) {
   compileCondition();
   eat(KW_DO);
   compileStatement();
-  assert("While statement pased ....");
+  assert("While statement parsed ....");
 }
 
 void compileDoSt(void) {
