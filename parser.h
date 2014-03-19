@@ -55,6 +55,7 @@ void compileTerm(void);
 void compileTerm2(void);
 void compileFactor(void);
 void compileIndexes(void);
+int tryCompileWhileSt(void);
 
 int compile(char *fileName);
 

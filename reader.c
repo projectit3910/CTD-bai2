@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include "reader.h"
 
+savePoint breakPoints[MAXBREAKPOINTS];
+int currentBreakPoint = 0;
+
 FILE *inputStream;
 int lineNo, colNo;
 int currentChar;
@@ -35,3 +38,33 @@ void closeInputStream() {
   fclose(inputStream);
 }
 
+void saveBreakPoint() {
+  if (currentBreakPoint < MAXBREAKPOINTS) {
+    breakPoints[currentBreakPoint].lineNo = lineNo;
+    breakPoints[currentBreakPoint].colNo = colNo;
+    breakPoints[currentBreakPoint].currentChar = currentChar;
+    fgetpos(inputStream,&(breakPoints[currentBreakPoint].filePos));
+    currentBreakPoint++;
+  } else {
+    //TODO bao loi
+  }
+}
+
+int loadBreakPoint() {
+  if (currentBreakPoint > 0) {
+    currentBreakPoint--;
+    lineNo = breakPoints[currentBreakPoint].lineNo;
+    colNo = breakPoints[currentBreakPoint].colNo;
+    currentChar = breakPoints[currentBreakPoint].currentChar;
+    fsetpos(inputStream,&(breakPoints[currentBreakPoint].filePos));
+    return 1;
+  } else {
+    return 0; //load break point failed
+  }
+}
+
+void deleteBreakPoint() {
+  if (currentBreakPoint > 0) {
+    currentBreakPoint--;
+  }
+}

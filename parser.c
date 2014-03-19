@@ -413,18 +413,59 @@ void compileWhileSt(void) {
   // TODO
   eat(KW_WHILE);
   compileCondition();
+  saveBreakPoint();
   eat(KW_DO);
-  compileStatement();
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
   assert("While statement parsed ....");
+}
+
+int tryCompileWhileSt(void) {
+  assert("Trying parse a while statement ....");
+  // TODO
+  eat(KW_WHILE);
+  compileCondition();
+  if (lookAhead->tokenType != KW_DO) {
+    assert("Try while statement parse failed ....");
+    return 0;
+  }
+  saveBreakPoint();
+  eat(KW_DO);
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
+  assert("While statement parsed ....");
+  return 1;
 }
 
 void compileDoSt(void) {
   assert("Parsing a do while statement ....");
+  saveBreakPoint();
   eat(KW_DO);
-  compileStatement();
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
   eat(KW_WHILE);
   compileCondition();
-  eat(SB_SEMICOLON);
   assert("Do while statement parsed ....");
 }
 
