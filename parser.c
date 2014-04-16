@@ -386,9 +386,19 @@ void compileGroupSt(void) {
   // TODO
   eat(KW_BEGIN);
   compileStatements();
-  if (lookAhead->tokenType == KW_END)
+  switch (lookAhead->tokenType) {
+  case TK_IDENT:
+  case KW_CALL:
+  case KW_BEGIN:
+  case KW_IF:
+  case KW_WHILE:
+  case KW_DO:
+  case KW_FOR:
+    eat(SB_SEMICOLON);
+    break;
+  default:
     eat(KW_END);
-  else eat(SB_SEMICOLON);
+    break;
   assert("Group statement parsed ....");
 }
 
