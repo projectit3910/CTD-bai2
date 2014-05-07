@@ -12,8 +12,6 @@
 
 #define MAXBREAKPOINTS 50
 
-#include <stdio.h>
-
 typedef struct {
   int lineNo, colNo;
   int currentChar;
