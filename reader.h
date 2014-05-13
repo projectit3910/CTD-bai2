@@ -10,8 +10,19 @@
 #define IO_ERROR 0
 #define IO_SUCCESS 1
 
+#define MAXBREAKPOINTS 50
+
+typedef struct {
+  int lineNo, colNo;
+  int currentChar;
+  fpos_t filePos;
+} savePoint;
+
 int readChar(void);
 int openInputStream(char *fileName);
 void closeInputStream(void);
 
+void saveBreakPoint();
+int loadBreakPoint();
+void deleteBreakPoint();
 #endif

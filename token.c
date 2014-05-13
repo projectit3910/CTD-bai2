@@ -36,7 +36,7 @@ struct {
 
 int keywordEq(char *kw, char *string) {
   while ((*kw != '\0') && (*string != '\0')) {
-    if (*kw != toupper(*string)) break;
+    if (*kw != *string) break;
     kw ++; string ++;
   }
   return ((*kw == '\0') && (*string == '\0'));
@@ -65,6 +65,8 @@ char *tokenToString(TokenType tokenType) {
   case TK_NUMBER: return "a number";
   case TK_CHAR: return "a constant char";
   case TK_EOF: return "end of file";
+  case TK_STRING: return "a constant string";
+  case TK_FLOAT: return "a float number";
 
   case KW_PROGRAM: return "keyword PROGRAM";
   case KW_CONST: return "keyword CONST";
@@ -106,6 +108,7 @@ char *tokenToString(TokenType tokenType) {
   case SB_RPAR: return "\')\'";
   case SB_LSEL: return "\'(.\'";
   case SB_RSEL: return "\'.)\'";
+  case SB_DIV: return "\'%\'";
   default: return "";
   }
 }

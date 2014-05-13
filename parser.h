@@ -6,6 +6,7 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 #include "token.h"
+#include "symtab.h"
 
 void scan(void);
 void eat(TokenType tokenType);
@@ -25,17 +26,16 @@ void compileVarDecl(void);
 void compileSubDecls(void);
 void compileFuncDecl(void);
 void compileProcDecl(void);
-void compileUnsignedConstant(void);
-void compileConstant(void);
-void compileConstant2(void);
-void compileType(void);
-void compileBasicType(void);
+ConstantValue* compileUnsignedConstant(void);
+ConstantValue* compileConstant(void);
+ConstantValue* compileConstant2(void);
+Type* compileType(void);
+Type* compileBasicType(void);
 void compileParams(void);
-void compileParams2(void);
 void compileParam(void);
 void compileStatements(void);
-void compileStatements2(void);
 void compileStatement(void);
+Type* compileLValue(void);
 void compileAssignSt(void);
 void compileCallSt(void);
 void compileGroupSt(void);
@@ -43,17 +43,20 @@ void compileIfSt(void);
 void compileElseSt(void);
 void compileWhileSt(void);
 void compileForSt(void);
-void compileArguments(void);
-void compileArguments2(void);
+void compileArgument(Object* param);
+void compileArguments(ObjectNode* paramList);
 void compileCondition(void);
-void compileCondition2(void);
-void compileExpression(void);
-void compileExpression2(void);
-void compileExpression3(void);
-void compileTerm(void);
+Type* compileExpression(void);
+Type* compileExpression2(void);
+Type* compileExpression3(void);
+Type* compileTerm(void);
 void compileTerm2(void);
-void compileFactor(void);
-void compileIndexes(void);
+Type* compileFactor(void);
+Type* compileIndexes(Type* arrayType);
+
+// extra
+int tryCompileWhileSt(void);
+void compileDoSt(void);
 
 int compile(char *fileName);
 
