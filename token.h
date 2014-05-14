@@ -8,7 +8,8 @@
 #define __TOKEN_H__
 
 #define MAX_IDENT_LEN 15
-#define KEYWORDS_COUNT 20
+//#define KEYWORDS_COUNT 20 //extra
+#define KEYWORDS_COUNT 22
 
 typedef enum {
   TK_NONE, TK_IDENT, TK_NUMBER, TK_CHAR, TK_EOF, TK_STRING, TK_FLOAT,
@@ -23,7 +24,9 @@ typedef enum {
   SB_SEMICOLON, SB_COLON, SB_PERIOD, SB_COMMA,
   SB_ASSIGN, SB_EQ, SB_NEQ, SB_LT, SB_LE, SB_GT, SB_GE,
   SB_PLUS, SB_MINUS, SB_TIMES, SB_SLASH,
-  SB_LPAR, SB_RPAR, SB_LSEL, SB_RSEL, SB_DIV
+  SB_LPAR, SB_RPAR, SB_LSEL, SB_RSEL, SB_DIV,
+  
+  KW_STRING, KW_FLOAT // extra
 } TokenType; 
 
 typedef struct {

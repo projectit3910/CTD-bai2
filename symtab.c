@@ -18,6 +18,8 @@ void freeReferenceList(ObjectNode *objList);
 SymTab* symtab;
 Type* intType;
 Type* charType;
+Type* stringType;
+Type* floatType;
 
 /******************* Type utilities ******************************/
 
@@ -69,14 +71,23 @@ int compareType(Type* type1, Type* type2) {
       if (type1->arraySize == type2->arraySize)
 	return compareType(type1->elementType, type2->elementType);
       else return 0;
-    } else return 1;
-  } else return 0;
+    } else 
+	return 1;
+  } else {
+    if ((type1->typeClass == TP_INT || type1->typeClass == TP_FLOAT) &&
+	(type2->typeClass == TP_INT || type2->typeClass == TP_FLOAT))
+      return 1;
+    else
+      return 0;
+  }
 }
 
 void freeType(Type* type) {
   switch (type->typeClass) {
   case TP_INT:
   case TP_CHAR:
+  case TP_STRING:
+  case TP_FLOAT:
     free(type);
     break;
   case TP_ARRAY:
@@ -121,6 +132,10 @@ ConstantValue* duplicateConstantValue(ConstantValue* v) {
   value->type = v->type;
   if (v->type == TP_INT) 
     value->intValue = v->intValue;
+  else if (v->type == TP_STRING)
+    strcpy(value->stringValue,v->stringValue);
+  else if (v->type == TP_FLOAT)
+    value->floatValue = v->floatValue;
   else
     value->charValue = v->charValue;
   return value;
@@ -321,6 +336,8 @@ void initSymTab(void) {
 
   intType = makeIntType();
   charType = makeCharType();
+  floatType = makeFloatType();
+  stringType = makeStringType();
 }
 
 void cleanSymTab(void) {
@@ -329,6 +346,8 @@ void cleanSymTab(void) {
   free(symtab);
   freeType(intType);
   freeType(charType);
+  freeType(stringType); //extra
+  freeType(floatType);
 }
 
 void enterBlock(Scope* scope) {

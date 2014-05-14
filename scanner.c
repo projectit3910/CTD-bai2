@@ -87,10 +87,15 @@ Token* readNumber(void) {
       } else token->value = token->value*10 + (currentChar-'0');
       readChar();
     } else if (charCodes[currentChar]==CHAR_PERIOD && token->tokenType == TK_NUMBER) {
+      saveBreakPoint();
       token->fvalue = token->value;
       token->tokenType = TK_FLOAT;
       readChar();
     } else break;
+  }
+  if (charCodes[currentChar]==CHAR_RPAR) {
+    loadBreakPoint();
+    token->tokenType = TK_NUMBER;
   }
   if (token->tokenType == TK_NUMBER)
     sprintf(token->string,"%d", token->value);
@@ -261,6 +266,7 @@ Token* getToken(void) {
 	break;
       }
     }
+    return makeToken(SB_PERIOD, ln, cn);
   case CHAR_SEMICOLON:
     token = makeToken(SB_SEMICOLON, lineNo, colNo);
     readChar(); 
@@ -376,6 +382,8 @@ void printToken(Token *token) {
   case SB_LSEL: printf("SB_LSEL\n"); break;
   case SB_RSEL: printf("SB_RSEL\n"); break;
   case SB_DIV: printf("SB_DIV\n"); break;
+  case KW_STRING: printf("KW_STRING\n"); break;
+  case KW_FLOAT: printf("KW_FLOAT\n"); break;
   }
 }
 

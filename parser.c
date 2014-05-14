@@ -18,6 +18,8 @@ Token *lookAhead;
 
 extern Type* intType;
 extern Type* charType;
+extern Type* stringType;
+extern Type* floatType;
 extern SymTab* symtab;
 
 void scan(void) {
@@ -41,7 +43,7 @@ void compileProgram(void) {
 
   program = createProgramObject(currentToken->string);
   enterBlock(program->progAttrs->scope);
-
+  
   eat(SB_SEMICOLON);
 
   compileBlock();
@@ -217,6 +219,14 @@ ConstantValue* compileUnsignedConstant(void) {
     eat(TK_CHAR);
     constValue = makeCharConstant(currentToken->string[0]);
     break;
+  case TK_STRING:
+    eat(TK_STRING);
+    constValue = makeStringConstant(currentToken->string);
+    break;
+  case TK_FLOAT:
+    eat(TK_FLOAT);
+    constValue = makeFloatConstant(currentToken->fvalue);
+    break;
   default:
     error(ERR_INVALID_CONSTANT, lookAhead->lineNo, lookAhead->colNo);
     break;
@@ -235,11 +245,18 @@ ConstantValue* compileConstant(void) {
   case SB_MINUS:
     eat(SB_MINUS);
     constValue = compileConstant2();
-    constValue->intValue = - constValue->intValue;
+    if (constValue->type == TP_FLOAT)
+      constValue->floatValue = - constValue->floatValue;
+    else
+      constValue->intValue = - constValue->intValue;
     break;
   case TK_CHAR:
     eat(TK_CHAR);
     constValue = makeCharConstant(currentToken->string[0]);
+    break;
+  case TK_STRING:
+    eat(TK_STRING);
+    constValue = makeStringConstant(currentToken->string);
     break;
   default:
     constValue = compileConstant2();
@@ -257,10 +274,14 @@ ConstantValue* compileConstant2(void) {
     eat(TK_NUMBER);
     constValue = makeIntConstant(currentToken->value);
     break;
+  case TK_FLOAT:
+    eat(TK_FLOAT);
+    constValue = makeFloatConstant(currentToken->fvalue);
+    break;
   case TK_IDENT:
     eat(TK_IDENT);
     obj = checkDeclaredConstant(currentToken->string);
-    if (obj->constAttrs->value->type == TP_INT)
+    if (obj->constAttrs->value->type == TP_INT || obj->constAttrs->value->type == TP_FLOAT)
       constValue = duplicateConstantValue(obj->constAttrs->value);
     else
       error(ERR_UNDECLARED_INT_CONSTANT,currentToken->lineNo, currentToken->colNo);
@@ -286,6 +307,14 @@ Type* compileType(void) {
   case KW_CHAR: 
     eat(KW_CHAR); 
     type = makeCharType();
+    break;
+  case KW_STRING: //extra
+    eat(KW_STRING);
+    type = makeStringType();
+    break;
+  case KW_FLOAT:
+    eat(KW_FLOAT);
+    type = makeFloatType();
     break;
   case KW_ARRAY:
     eat(KW_ARRAY);
@@ -322,6 +351,14 @@ Type* compileBasicType(void) {
   case KW_CHAR: 
     eat(KW_CHAR); 
     type = makeCharType();
+    break;
+  case KW_STRING: // extra
+    eat(KW_STRING);
+    type = makeStringType();
+    break;
+  case KW_FLOAT:
+    eat(KW_FLOAT);
+    type = makeFloatType();
     break;
   default:
     error(ERR_INVALID_BASICTYPE, lookAhead->lineNo, lookAhead->colNo);
@@ -393,6 +430,9 @@ void compileStatement(void) {
     break;
   case KW_WHILE:
     compileWhileSt();
+    break;
+  case KW_DO: // extra
+    compileDoSt();
     break;
   case KW_FOR:
     compileForSt();
@@ -476,6 +516,7 @@ void compileGroupSt(void) {
   default:
     eat(KW_END);
     break;
+  }
 }
 
 void compileIfSt(void) {
@@ -724,6 +765,7 @@ Type* compileExpression3(void) {
     // check the FOLLOW set
   case KW_TO:
   case KW_DO:
+  case KW_WHILE: // extra
   case SB_RPAR:
   case SB_COMMA:
   case SB_EQ:
@@ -755,9 +797,9 @@ Type* compileTerm(void) {
   return type;
 }
 
-void compileTerm2(void) {
+Type* compileTerm2(void) {
   // TODO: check type of term2
-  Type* type;
+  Type* type=NULL;
 
   switch (lookAhead->tokenType) {
   case SB_TIMES:
@@ -783,6 +825,7 @@ void compileTerm2(void) {
   case SB_MINUS:
   case KW_TO:
   case KW_DO:
+  case KW_WHILE: // extra
   case SB_RPAR:
   case SB_COMMA:
   case SB_EQ:
@@ -800,6 +843,7 @@ void compileTerm2(void) {
   default:
     error(ERR_INVALID_TERM, lookAhead->lineNo, lookAhead->colNo);
   }
+  return type;
 }
 
 Type* compileFactor(void) {
@@ -813,11 +857,13 @@ Type* compileFactor(void) {
     eat(TK_NUMBER);
     type = intType;
     break;
-  case TK_FOAT: // extra
+  case TK_FLOAT: // extra
     eat(TK_FLOAT);
+    type = floatType;
     break;
   case TK_STRING: // extra
     eat(TK_STRING);
+    type = stringType;
     break;
   case TK_CHAR:
     eat(TK_CHAR);

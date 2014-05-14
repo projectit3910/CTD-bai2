@@ -112,7 +112,7 @@ Object* checkDeclaredLValueIdent(char* name) {
 
 void checkIntType(Type* type) {
   // TODO
-  if ((type != NULL) && (type->typeClass == TP_INT))
+  if ((type != NULL) && ((type->typeClass == TP_INT) || (type->typeClass == TP_FLOAT)))
     return;
   else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
 }
@@ -126,7 +126,7 @@ void checkCharType(Type* type) {
 
 void checkBasicType(Type* type) {
   // TODO
-  if ((type != NULL) && ((type->typeClass == TP_INT) || (type->typeClass == TP_CHAR)))
+  if ((type != NULL) && ((type->typeClass == TP_INT) || (type->typeClass == TP_FLOAT)))
     return;
   else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
 }
