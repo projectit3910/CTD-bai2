@@ -18,7 +18,7 @@ void freeReferenceList(ObjectNode *objList);
 SymTab* symtab;
 Type* intType;
 Type* charType;
-Type* stringType;
+Type* stringType; // Extra
 Type* floatType;
 
 /******************* Type utilities ******************************/
