@@ -34,7 +34,7 @@ typedef struct {
   int lineNo, colNo;
   TokenType tokenType;
   int value;
-  double fvalue;
+  float fvalue;
 } Token;
 
 TokenType checkKeyword(char *string);

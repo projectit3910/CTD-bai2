@@ -8,14 +8,16 @@
 #include <stdlib.h>
 #include "error.h"
 
-#define NUM_OF_ERRORS 29
+// #define NUM_OF_ERRORS 29
+#define NUM_OF_ERRORS 31 // extra
 
 struct ErrorMessage {
   ErrorCode errorCode;
   char *message;
 };
 
-struct ErrorMessage errors[] = {
+// struct ErrorMessage errors[29] = {
+struct ErrorMessage errors[31] = { // extra
   {ERR_END_OF_COMMENT, "End of comment expected."},
   {ERR_IDENT_TOO_LONG, "Identifier too long."},
   {ERR_INVALID_CONSTANT_CHAR, "Invalid char constant."},

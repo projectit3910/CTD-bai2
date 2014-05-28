@@ -48,14 +48,14 @@ void compileArguments(ObjectNode* paramList);
 void compileCondition(void);
 Type* compileExpression(void);
 Type* compileExpression2(void);
-Type* compileExpression3(void);
+Type* compileExpression3(Type* argType1);
 Type* compileTerm(void);
-Type* compileTerm2(void);
+Type* compileTerm2(Type* argType2);
 Type* compileFactor(void);
 Type* compileIndexes(Type* arrayType);
 
 // extra
-int tryCompileWhileSt(void);
+//int tryCompileWhileSt(void);
 void compileDoSt(void);
 
 int compile(char *fileName);

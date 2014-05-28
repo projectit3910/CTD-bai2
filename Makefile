@@ -4,8 +4,8 @@ LIBS =  -lm
 
 all: kplc
 
-kplc: main.o parser.o scanner.o reader.o charcode.o token.o error.o symtab.o semantics.o debug.o
-	${CC} main.o parser.o scanner.o reader.o charcode.o token.o error.o symtab.o semantics.o debug.o -o kplc
+kplc: main.o parser.o scanner.o reader.o charcode.o token.o error.o symtab.o semantics.o debug.o instructions.o codegen.o MIPSinstructions.o
+	${CC} main.o parser.o scanner.o reader.o charcode.o token.o error.o symtab.o semantics.o debug.o instructions.o codegen.o MIPSinstructions.o -o kplc -g
 
 main.o: main.c
 	${CC} ${CFLAGS} main.c
@@ -36,6 +36,15 @@ semantics.o: semantics.c
 
 debug.o: debug.c
 	${CC} ${CFLAGS} debug.c
+
+instructions.o: instructions.c
+	${CC} ${CFLAGS} instructions.c
+
+codegen.o: codegen.c
+	${CC} ${CFLAGS} codegen.c
+
+MIPSinstructions.o: MIPSinstructions.c
+	${CC} ${CFLAGS} MIPSinstructions.c
 
 clean:
 	rm -f *.o *~

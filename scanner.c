@@ -161,20 +161,20 @@ Token* readConstString(void) {
       backslash = 1;      
     } else {
       if (str_len >= MAX_IDENT_LEN) {
-	token->tokenType = TK_NONE;
-	error(ERR_CONST_STRING_TOO_LONG, lineNo, colNo);
-	break;
+        token->tokenType = TK_NONE;
+        error(ERR_CONST_STRING_TOO_LONG, lineNo, colNo);
+        break;
       }
       if (currentChar == 't' && backslash)
-	token->string[str_len++] = '\t';
+        token->string[str_len++] = '\t';
       else if (currentChar == 'n' && backslash)
-	token->string[str_len++] = '\n';
+        token->string[str_len++] = '\n';
       else if (currentChar == '\n' && backslash) {
-	backslash = 0;
-	skipBlank();
-	continue;	
+        backslash = 0;
+        skipBlank();
+        continue;	
       } else {
-	token->string[str_len++] = currentChar;
+        token->string[str_len++] = currentChar;
       }
       token->string[str_len]='\0';
       backslash = 0;
@@ -305,7 +305,7 @@ Token* getToken(void) {
     readChar(); 
     return token;
   case CHAR_PERCENT: 
-    token = makeToken(SB_TIMES, lineNo, colNo);
+    token = makeToken(SB_DIV, lineNo, colNo);
     readChar(); 
     return token;
   default:
