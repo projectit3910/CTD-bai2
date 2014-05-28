@@ -42,6 +42,7 @@ void compileGroupSt(void);
 void compileIfSt(void);
 void compileElseSt(void);
 void compileWhileSt(void);
+int tryCompileWhileSt(void);
 void compileForSt(void);
 void compileArgument(Object* param);
 void compileArguments(ObjectNode* paramList);

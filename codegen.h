@@ -107,6 +107,7 @@ void updateJ(Instruction* jmp, CodeAddress label);
 void updateFJ(Instruction* jmp, CodeAddress label);
 
 CodeAddress getCurrentCodeAddress(void);
+void setCurrentCodeAddress(CodeAddress address);
 int isPredefinedProcedure(Object* proc);
 int isPredefinedFunction(Object* func);
 

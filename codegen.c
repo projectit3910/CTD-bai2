@@ -319,6 +319,9 @@ void updateFJ(Instruction* jmp, CodeAddress label) {
 CodeAddress getCurrentCodeAddress(void) {
   return codeBlock->codeSize;
 }
+void setCurrentCodeAddress(CodeAddress address) {
+  codeBlock->codeSize = address;
+}
 
 int isPredefinedFunction(Object* func) {
   return ((func == readiFunction) || (func == readcFunction) || (func == readsFunction));

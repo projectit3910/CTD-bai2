@@ -560,25 +560,78 @@ void compileIfSt(void) {
 
 void compileWhileSt(void) {
   CodeAddress beginWhile;
+  CodeAddress saveAddress;
   Instruction* fjInstruction;
 
   beginWhile = getCurrentCodeAddress();
   eat(KW_WHILE);
   compileCondition();
   fjInstruction = genFJ(DC_VALUE);
+  saveAddress = getCurrentCodeAddress();
+  saveBreakPoint();
   eat(KW_DO);
-  compileStatement();
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      setCurrentCodeAddress(saveAddress);
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
   genJ(beginWhile);
   updateFJ(fjInstruction, getCurrentCodeAddress());
 }
 
+int tryCompileWhileSt(void) {
+  CodeAddress beginWhile;
+  CodeAddress saveAddress;
+  Instruction* fjInstruction;
+
+  beginWhile = getCurrentCodeAddress();
+  eat(KW_WHILE);
+  compileCondition();
+  fjInstruction = genFJ(DC_VALUE);  
+  if (lookAhead->tokenType != KW_DO) {
+    return 0;
+  }
+  saveAddress = getCurrentCodeAddress();
+  saveBreakPoint();
+  eat(KW_DO);
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      setCurrentCodeAddress(saveAddress);
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
+  genJ(beginWhile);
+  updateFJ(fjInstruction, getCurrentCodeAddress());
+  return 1;
+}
+
 void compileDoSt(void) {
   CodeAddress beginDo;
+  CodeAddress saveAddress;
   Instruction* fjInstruction;
+  saveBreakPoint();
   
-  beginDo = getCurrentCodeAddress();
+  saveAddress = beginDo = getCurrentCodeAddress();
   eat(KW_DO);
-  compileStatement();
+  if (lookAhead->tokenType == KW_WHILE) {
+    if (tryCompileWhileSt()) deleteBreakPoint();
+    else {
+      loadBreakPoint();
+      setCurrentCodeAddress(saveAddress);
+      scan();
+    }
+  } else {
+    compileStatement();
+  }
   eat(KW_WHILE);
   compileCondition();
   fjInstruction = genJ(DC_VALUE);
