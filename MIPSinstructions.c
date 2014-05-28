@@ -478,7 +478,7 @@ base_return:\r\n\
 }
 
 void mipsFuncStrcat() {
-  print("// a0 = str1 address\r\n// a1 = str2 address\r\n// a2 = max strlen\r\n// v0 -> strlen\r\n.ent strcat\r\nstrcat:\r\n	li v0, 0 // strlen\r\n	\r\nstrcat_loop1:\r\n	lb v1, 0(a0)\r\n	beq v1, zero, strcat_endLoop1\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	j strcat_loop1\r\nstrcat_endLoop1:\r\n	\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	beq a3, zero, strcat_endLoop2\r\n	\r\nstrcat_loop2:\r\n	lb v1, 0(a1)\r\n	beq v1, zero, strcat_endLoop2\r\n	sb v1, 0(a0)\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	addi a1, a1, 1\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	bne a3, zero, strcat_loop2\r\nstrcat_endLoop2:\r\n	li v1, 0\r\n	sb v1, 0(a0)\r\n	jr ra\r\n.end strcat\r\n");
+  print("// a0 = str1 address\r\n// a1 = str2 address\r\n// a2 = max strlen\r\n// v0 -> strlen\r\n.ent strcat\r\nstrcat:\r\n	li v0, 0 // strlen\r\n	\r\nstrcat_loop1:\r\n	lb v1, 0(a0)\r\n	beq v1, zero, strcat_endLoop1\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	j strcat_loop1\r\nstrcat_endLoop1:\r\n	\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	bne a3, zero, strcat_endLoop2\r\n	\r\nstrcat_loop2:\r\n	lb v1, 0(a1)\r\n	beq v1, zero, strcat_endLoop2\r\n	sb v1, 0(a0)\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	addi a1, a1, 1\r\n	slt a3, v0, a2 // check if strlen exceed\r\n	bne a3, zero, strcat_loop2\r\nstrcat_endLoop2:\r\n	li v1, 0\r\n	sb v1, 0(a0)\r\n	jr ra\r\n.end strcat\r\n");
 }
 
 void mipsFuncSingle2Word() {

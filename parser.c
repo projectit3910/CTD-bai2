@@ -791,10 +791,24 @@ Type* compileExpression3(Type* argType1) {
   switch (lookAhead->tokenType) {
   case SB_PLUS:
     eat(SB_PLUS);
-    checkSupportPlusOpType(argType1);
+    //checkSupportPlusOpType(argType1);
     argType2 = compileTerm();
-    checkSupportPlusOpType(argType2);
-    checkTypeEquality(argType1,argType2);
+    //checkSupportPlusOpType(argType2);
+    
+    if ((argType1->typeClass == TP_STRING)) {
+      checkStringType(argType2);
+    } else if ((argType1->typeClass == TP_INT)) {
+      checkIntType(argType2);
+    } else if (argType2->typeClass == TP_STRING) {
+      checkStringType(argType1);
+    } else if (argType2->typeClass == TP_INT) {
+      checkIntType(argType1);
+    } else {
+      checkSupportPlusOpType(argType1);
+      checkSupportPlusOpType(argType2);
+      checkTypeEquality(argType1,argType2);
+    }
+    //checkTypeEquality(argType1,argType2);
 
     if (argType1->typeClass == TP_STRING)
       genADS();
