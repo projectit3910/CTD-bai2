@@ -48,11 +48,13 @@ void mipsGT();
 void mipsLT();
 void mipsGE();
 void mipsLE();
+void mipsCSW();
 void startMIPScode();
 void endMIPScode();
 void mipsFuncBase();
 void mipsFuncInput();
 void mipsFuncStrcat();
+void mipsFuncSingle2Word();
 
 void printMIPScode(CodeBlock* codeBlock);
 void MIPSinstruction(Instruction* inst);

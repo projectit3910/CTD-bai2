@@ -163,7 +163,7 @@ void compileFuncDecl(void) {
 
   eat(SB_COLON);
   returnType = compileBasicType();
-  checkBasicType2(returnType);
+  checkReturnableType(returnType);
   funcObj->funcAttrs->returnType = returnType;
 
   eat(SB_SEMICOLON);
@@ -321,7 +321,10 @@ Type* compileType(void) {
   case KW_ARRAY:
     eat(KW_ARRAY);
     eat(SB_LSEL);
-    eat(TK_NUMBER);
+    if (lookAhead->tokenType == TK_FLOAT)
+      eat(TK_FLOAT);
+    else
+      eat(TK_NUMBER);
 
     arraySize = currentToken->value;
 
@@ -490,7 +493,7 @@ void compileAssignSt(void) {
   expType = compileExpression();
   checkTypeEquality(varType, expType);
 
-  if (expType->typeClass == TP_STRING)
+  if (varType->typeClass == TP_STRING)
     genSTS();
   else
     genST();
@@ -592,7 +595,7 @@ void compileForSt(void) {
   eat(KW_FOR);
 
   varType = compileLValue();
-  checkNumberType(varType);
+  checkIntType(varType);
   eat(SB_ASSIGN);
 
   genCV();
@@ -633,10 +636,10 @@ void compileArgument(Object* param) {
 
   if (param->paramAttrs->kind == PARAM_VALUE) {
     type = compileExpression();
-    checkTypeEquality(type, param->paramAttrs->type);
+    checkTypeEquality(param->paramAttrs->type, type);
   } else {
     type = compileLValue();
-    checkTypeEquality(type, param->paramAttrs->type);
+    checkTypeEquality(param->paramAttrs->type, type);
   }
 }
 
@@ -928,7 +931,7 @@ Type* compileFactor(void) {
   case TK_CHAR:
     eat(TK_CHAR);
     type = charType;
-    genLC(currentToken->value);
+    genLC(currentToken->string[0]);
     break;
   case TK_IDENT:
     eat(TK_IDENT);

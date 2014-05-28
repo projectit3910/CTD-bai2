@@ -27,7 +27,8 @@ void checkStringType(Type* type);
 void checkFloatType(Type* type);
 void checkArrayType(Type* type);
 void checkBasicType(Type* type);
-void checkBasicType2(Type* type);
+void checkReturnableType(Type* type);
 void checkTypeEquality(Type* type1, Type* type2);
+void checkCastableType(Type* type1, Type* type2);
 
 #endif

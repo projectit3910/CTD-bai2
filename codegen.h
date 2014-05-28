@@ -56,6 +56,10 @@ void genProcedureCall(Object* proc);
 void genPredefinedFunctionCall(Object* func);
 void genFunctionCall(Object* func);
 
+void genF2I();
+void genC2I();
+void genC2S();
+
 void genParameterStringValue(Object* param);
 void genVariableStringValue(Object* var);
 void genLCS(char* value);

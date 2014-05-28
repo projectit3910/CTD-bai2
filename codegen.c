@@ -102,6 +102,21 @@ void genFunctionCall(Object* func) {
   genCALL(computeNestedLevel(func->funcAttrs->scope->outer),func->funcAttrs->codeAddress);
 }
 
+// CASTING UNITY
+void genF2I() {
+  emitCSW(codeBlock);
+}
+
+void genC2I() {
+  return; // do not need do anything
+}
+
+void genC2S() {
+  genLC(1<<24);
+  genML();
+  genINT(3);
+}
+
 // STRING UNITY
 
 void genParameterStringValue(Object* param) {

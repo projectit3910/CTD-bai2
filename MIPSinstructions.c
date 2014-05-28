@@ -80,7 +80,7 @@ void mipsDCT(WORD q) {
 }
 
 void mipsJ(WORD q) {
-	print("	j i_%d\r\n", q);
+	print("	j i_%lu\r\n", q);
 }
 
 void mipsFJ(WORD q) {
@@ -90,9 +90,9 @@ void mipsFJ(WORD q) {
 	add t0, t1, sp // t0 = &s[t]\r\n\
 	addi s0, s0, -1 // t = t - 1\r\n\
 	lw t1, 0(t0) // t1 = s[t]\r\n\
-	bne t1,zero,label_%d // skip jump if s[t] != 0\r\n\
-	j i_%d\r\n\
-label_%d:\r\n",l,q,l);
+	bne t1,zero,label_%lu // skip jump if s[t] != 0\r\n\
+	j i_%lu\r\n\
+label_%lu:\r\n",l,q,l);
 }
 
 void mipsHL() {
@@ -138,14 +138,14 @@ void mipsCALL(WORD p, WORD q) {
 	sll t1, s0, 2\r\n\
 	add t0, t1, sp // t0 = &s[t]\r\n\
 	sw fp, 8(t0) // s[t+2] = b\r\n\
-	la t2, label_%d\r\n\
+	la t2, label_%lu\r\n\
 	sw t2, 12(t0) // s[t+3] = pc\r\n\
 	li a0, %d // a0 = p\r\n\
 	jal base\r\n\
 	sw v0, 16(t0) // s[t+4] = base(p)\r\n\
 	addi fp, s0, 1 // b = t+1\r\n",l,p);
 	mipsJ(q);
-	print("	label_%d:\r\n",l);
+	print("	label_%lu:\r\n",l);
 }
 
 void mipsEP() {
@@ -336,12 +336,12 @@ void mipsEQ() {
 	add t0, t1, sp // t0 = &s[t]\r\n\
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
-	beq t1, t2, label_%d\r\n\
+	beq t1, t2, label_%lu\r\n\
 	li t1, 0 // not equal\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 1 // equal\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] == s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
 }
 
@@ -353,12 +353,12 @@ void mipsNE() {
 	add t0, t1, sp // t0 = &s[t]\r\n\
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
-	beq t1, t2, label_%d\r\n\
+	beq t1, t2, label_%lu\r\n\
 	li t1, 1 // equal\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 0 // not equal\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] != s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
 }
 
@@ -371,12 +371,12 @@ void mipsGT() {
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
 	sub t1, t1, t2\r\n\
-	bgtz t1, label_%d\r\n\
+	bgtz t1, label_%lu\r\n\
 	li t1, 0\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 1\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] > s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
 }
 
@@ -389,12 +389,12 @@ void mipsLT() {
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
 	sub t1, t1, t2\r\n\
-	bltz t1, label_%d\r\n\
+	bltz t1, label_%lu\r\n\
 	li t1, 0\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 1\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] < s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
 }
 
@@ -407,12 +407,12 @@ void mipsGE() {
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
 	sub t1, t1, t2\r\n\
-	bgez t1, label_%d\r\n\
+	bgez t1, label_%lu\r\n\
 	li t1, 0\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 1\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] >= s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
 }
 
@@ -425,13 +425,24 @@ void mipsLE() {
 	lw t1, 0(t0) // t1 = s[t]\r\n\
 	lw t2, 4(t0) // t2 = s[t+1]\r\n\
 	sub t1, t1, t2\r\n\
-	blez t1, label_%d\r\n\
+	blez t1, label_%lu\r\n\
 	li t1, 0\r\n\
-	b label_%d\r\n\
-label_%d:\r\n\
+	b label_%lu\r\n\
+label_%lu:\r\n\
 	li t1, 1\r\n\
-label_%d:\r\n\
+label_%lu:\r\n\
 	sw t1, 0(t0) // s[t] = s[t] <= s[t+1] ? 1 : 0\r\n",l1,l2,l1,l2);
+}
+
+void mipsCSW() {
+  print("\
+	sll t1, s0, 2\r\n\
+	add t0, t1, sp // t0 = &s[t]\r\n\
+	lw a0, 0(t0) // a0 = s[t]\r\n\
+	jal single2word\r\n\
+	sll t1, s0, 2\r\n\
+	add t0, t1, sp // t0 = &s[t]\r\n\
+	sw v0, 0(t0) // s[t] = (short)s[t]\r\n");
 }
 
 void startMIPScode() {
@@ -467,7 +478,11 @@ base_return:\r\n\
 }
 
 void mipsFuncStrcat() {
-  print("// a0 = str1 address\r\n// a1 = str2 address\r\n// a2 = max strlen\r\n// v0 -> strlen\r\n.ent strcat\r\nstrcat:\r\n	li v0, 0 // strlen\r\n	\r\nstrcat_loop1:\r\n	lb v1, 0(a0)\r\n	beq v1, zero, strcat_endLoop1\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	j strcat_loop1\r\nstrcat_endLoop1:\r\n	\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	beq a3, zero, strcat_endLoop2\r\n	\r\nstrcat_loop2:\r\n	lb v1, 0(a1)\r\n	beq v1, zero, strcat_endLoop2\r\n	sb v1, 0(a0)\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	addi a1, a1, 1\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	bne a3, zero, strcat_loop2\r\nstrcat_endLoop2:\r\n	li v1, 0\r\n	sb v1, 0(a0)\r\n	jr ra\r\n.end strcat");
+  print("// a0 = str1 address\r\n// a1 = str2 address\r\n// a2 = max strlen\r\n// v0 -> strlen\r\n.ent strcat\r\nstrcat:\r\n	li v0, 0 // strlen\r\n	\r\nstrcat_loop1:\r\n	lb v1, 0(a0)\r\n	beq v1, zero, strcat_endLoop1\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	j strcat_loop1\r\nstrcat_endLoop1:\r\n	\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	beq a3, zero, strcat_endLoop2\r\n	\r\nstrcat_loop2:\r\n	lb v1, 0(a1)\r\n	beq v1, zero, strcat_endLoop2\r\n	sb v1, 0(a0)\r\n	addi v0, v0, 1\r\n	addi a0, a0, 1\r\n	addi a1, a1, 1\r\n	slt a3, a2, v0 // check if strlen exceed\r\n	bne a3, zero, strcat_loop2\r\nstrcat_endLoop2:\r\n	li v1, 0\r\n	sb v1, 0(a0)\r\n	jr ra\r\n.end strcat\r\n");
+}
+
+void mipsFuncSingle2Word() {
+  print(".ent single2word\r\nsingle2word:\r\n	lui t0, 0x8000 // sign bit\r\n	lui t1, 0x7F80 // exponent bit\r\n	li t2, 0x7FFFFF // fraction bit\r\n	li v0, 0\r\n	\r\n	and t2, a0, t2\r\n	and t0, a0, t0\r\n	and t1, a0, t1\r\n	\r\n	srl t1, t1, 23\r\n	lui t3, 0x80\r\n	or t2, t3, t2\r\n	\r\n	addi t1, t1, -127\r\n	bltz t1, single2word_return\r\n	addi t3, t1, -32\r\n	bgez t3, single2word_return // overflowed\r\n\r\n	addi t1, t1, -23\r\n	bgtz t1, single2word_shiftLeft\r\n	sub t1, zero, t1\r\n	srlv v0, t2, t1\r\n	j single2word_next\r\nsingle2word_shiftLeft:\r\n	sllv v0, t2, t1\r\nsingle2word_next:\r\n	\r\n	beq t0, zero, single2word_return\r\n	sub v0, zero, v0\r\n	\r\nsingle2word_return:\r\n	jr ra\r\n.end single2word\r\n");
 }
 
 void mipsFuncInput() {
@@ -482,6 +497,7 @@ void endMIPScode() {
 	mipsFuncBase();
 	mipsFuncInput();
   mipsFuncStrcat();
+  mipsFuncSingle2Word();
 }
 
 void MIPSinstruction(Instruction* inst) {
@@ -522,6 +538,7 @@ void MIPSinstruction(Instruction* inst) {
   case OP_LT: print("i_%lu: // LT\r\n", nextInstruction()); mipsLT(); break;
   case OP_GE: print("i_%lu: // GE\r\n", nextInstruction()); mipsGE(); break;
   case OP_LE: print("i_%lu: // LE\r\n", nextInstruction()); mipsLE(); break;
+  case OP_CSW: print("i_%lu: // CSW\r\n", nextInstruction()); mipsCSW(); break;
 
   //case OP_BP: mipsBP(); break;
   default: break;

@@ -8,6 +8,7 @@
 #include <string.h>
 #include "semantics.h"
 #include "error.h"
+#include "codegen.h"
 
 extern SymTab* symtab;
 extern Token* currentToken;
@@ -123,9 +124,18 @@ void checkNumberType(Type* type) {
 }
 
 void checkIntType(Type* type) {
-  if ((type != NULL) && (type->typeClass == TP_INT))
-    return;
-  else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+  if (type != NULL) {
+    if (type->typeClass == TP_INT) {
+      return;
+    } else if (type->typeClass == TP_FLOAT) {
+      genF2I();
+      return;
+    } else if (type->typeClass == TP_CHAR) {
+      genC2I();
+      return;
+    }
+  }
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
 }
 
 void checkFloatType(Type* type) {
@@ -141,9 +151,15 @@ void checkCharType(Type* type) {
 }
 
 void checkStringType(Type* type) {
-  if ((type != NULL) && (type->typeClass == TP_STRING))
-    return;
-  else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+  if (type != NULL) {
+    if (type->typeClass == TP_STRING) {
+      return;
+    } else if (type->typeClass == TP_CHAR) {
+      genC2S();
+      return;
+    }
+  }
+  error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
 }
 
 void checkBasicType(Type* type) {
@@ -154,7 +170,7 @@ void checkBasicType(Type* type) {
   else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
 }
 
-void checkBasicType2(Type* type) {
+void checkReturnableType(Type* type) {
   if ((type != NULL) && ((type->typeClass == TP_INT) || (type->typeClass == TP_FLOAT) || (type->typeClass == TP_CHAR)))
     return;
   else error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
@@ -167,8 +183,16 @@ void checkArrayType(Type* type) {
 }
 
 void checkTypeEquality(Type* type1, Type* type2) {
-  if (compareType(type1, type2) == 0)
-    error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+  if (compareType(type1, type2) == 0) {
+    checkCastableType(type1, type2);
+  }
 }
 
-
+void checkCastableType(Type* type1, Type* type2) {
+  if (type1->typeClass == TP_INT) checkIntType(type2);
+  else if (type1->typeClass == TP_FLOAT) checkFloatType(type2);
+  else if (type1->typeClass == TP_CHAR) checkCharType(type2);
+  else if (type1->typeClass == TP_STRING) checkStringType(type2);
+  else
+    error(ERR_TYPE_INCONSISTENCY, currentToken->lineNo, currentToken->colNo);
+}
